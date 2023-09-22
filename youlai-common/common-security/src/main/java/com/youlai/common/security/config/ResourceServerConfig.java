@@ -50,16 +50,18 @@ public class ResourceServerConfig {
         log.info("whitelist path:{}", JSONUtil.toJsonStr(ignoreUrls));
 
         http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .requestMatchers(Convert.toStrArray(ignoreUrls)).permitAll()
-                .anyRequest().authenticated()
+                .csrf(csrf->csrf.disable())
+                .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .securityMatcher(Convert.toStrArray(ignoreUrls))
+                .authorizeHttpRequests(s->s.requestMatchers(Convert.toStrArray(ignoreUrls)).permitAll().anyRequest().authenticated())
         ;
-        http.oauth2ResourceServer()
-                .jwt()
-                // .jwtAuthenticationConverter(jwtAuthenticationConverter())
+        http
+                .oauth2ResourceServer((oauth2ResourceServer) ->
+                        oauth2ResourceServer.jwt((jwt) ->
+                                        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+                                )
+                );
+        // .jwtAuthenticationConverter(jwtAuthenticationConverter())
                 /*.and()
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)*/

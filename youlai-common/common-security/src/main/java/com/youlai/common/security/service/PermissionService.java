@@ -43,13 +43,13 @@ public class PermissionService {
 
         Long userId = SecurityUtils.getUserId();
 
-        Set<String> perms = (Set<String>) redisTemplate.opsForValue().get(SecurityConstants.USER_PERMS_CACHE_PREFIX + userId); // 权限数据用户登录成功节点存入redis，详见 JwtTokenManager#createToken()
-
+        // 权限数据用户登录成功节点存入redis，详见 JwtTokenManager#createToken()
+        Set<String> perms = (Set<String>) redisTemplate.opsForValue().get(SecurityConstants.USER_PERMS_CACHE_PREFIX + userId);
         if (CollectionUtil.isEmpty(perms)) {
             return false;
         }
-        boolean hasPermission = perms.stream()
-                .anyMatch(item -> PatternMatchUtils.simpleMatch(perm, item)); // *号匹配任意字符
+        // *号匹配任意字符
+        boolean hasPermission = perms.stream().anyMatch(item -> PatternMatchUtils.simpleMatch(perm, item));
 
         if (!hasPermission) {
             log.error("用户无访问权限");

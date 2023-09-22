@@ -18,11 +18,12 @@ public class DefaultSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize ->
-                        authorize
-                                .requestMatchers("/login",".well-known/openid-configuration").permitAll()
-                                .anyRequest().authenticated()
+                        authorize.requestMatchers("/login",".well-known/openid-configuration")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
                 )
-                .csrf().disable()
+                .csrf((csrf) -> csrf.disable())
                 .formLogin(withDefaults())
         ;
         return http.build();
